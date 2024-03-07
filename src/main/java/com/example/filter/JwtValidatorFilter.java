@@ -53,6 +53,13 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getServletPath().equals("/start/block");
+    	String path=request.getServletPath();
+    	if(path.startsWith("/start")) {
+    		return true;
+    	}
+        if(path.startsWith("/token")) {
+        	return true;
+        }
+        return false;
     }
 }

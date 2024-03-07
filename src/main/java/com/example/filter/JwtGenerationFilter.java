@@ -20,32 +20,48 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
-public class JwtGenerationFilter {
+import org.springframework.web.filter.OncePerRequestFilter;
+
+public class JwtGenerationFilter extends OncePerRequestFilter {
 	String secret="jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4";
 	
 	
-	public String generateToken(Authentication authentication)
-			 {
+	
+	
+	@Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String jwt="";
+		System.out.println("generated-inside dointernalFilter");
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
 		if(authentication!=null) {
 			SecretKey key= Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-			jwt=Jwts.builder().setSubject("JWT Token")
+			String jwt=Jwts.builder().setSubject("JWT Token")
                     .claim("username", authentication.getName())
                     .claim("authorities", populateAuthorities(authentication.getAuthorities()))
                     .setIssuedAt(new Date())
                     .setExpiration(new Date((new Date()).getTime() + 30000000))
                     .signWith(key).compact();
-            
-			System.out.println(jwt);				
+            response.setHeader("Authorization", jwt);
+			System.out.println("genreated"+jwt);				
 			
 		}
 		
-		return jwt;
+		filterChain.doFilter(request, response);
 		
 	}
+	
+	@Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+		String path=request.getServletPath();
+		
+		boolean t=path.equals("/new/access_by_token");
+		System.out.println(path+"  "+t);
+        return t;
+    }
+	
 	private String populateAuthorities(Collection<? extends GrantedAuthority> collection) {
 		Set<String> authoritySet=new HashSet<>();
 		for(GrantedAuthority authority:collection) {

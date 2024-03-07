@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,15 +32,17 @@ public class BaseController {
 		return "Welcome to my app";
 		
 	}
+	
+	/**
 	@GetMapping("/index")
 	public String getToIndex() {
 		return "Index is accessible";
 		
-	}
+	}**/
 	
 	@PostMapping("/adduser")
 	public String addUser(@RequestBody User user) {
-		
+
 		String pass=user.getPassword();
 		user.setPassword(encoder.encode(pass));
 		repo.save(user);
@@ -47,17 +50,14 @@ public class BaseController {
 		
 	}
 	
-	@GetMapping("/block")
-	public String block() {
-		
-		return "Only authenticated person can access this url";
-	}
 	
+	
+	
+	/**
 	@GetMapping("/spring")
 	public String insideSpring() {
-		Authentication  authentication=SecurityContextHolder.getContext().getAuthentication();
-		String jwt=generate.generateToken(authentication);
-		return jwt;
+		
+		return "inside spring";
 	}
-
+	**/
 }

@@ -5,14 +5,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/new")
-public class NewController {
+@RequestMapping("/token")
+public class TokenController {
 	
-	@GetMapping("/access_by_token")
-	public String getInside() {
-		return "logged in using token";
+	@GetMapping("/generate_token")
+	public String block() {
+		
+		return "Only authenticated person can access this url";
 	}
-	
-	
 
 }
